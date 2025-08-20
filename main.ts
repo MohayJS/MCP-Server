@@ -1,19 +1,19 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 
 const server = new McpServer({
   name: "Weather Server",
-  version: "1.0.0"
+  version: "1.0.0",
 });
 
 server.tool(
-  'get-weather',
-  'Tool to get the weather of a city',
+  "get-weather",
+  "Tool to get the weather of a city",
   {
-    city: z.string().describe("The name of the city to get the weather for")
+    city: z.string().describe("The name of the city to get the weather for"),
   },
-  async({ city }) => {
+  async ({ city }) => {
     try {
       // Step 1: Get coordinates for the city
       const geoResponse = await fetch(
@@ -27,9 +27,9 @@ server.tool(
           content: [
             {
               type: "text",
-              text: `Sorry, I couldn't find a city named "${city}". Please check the spelling and try again.`
-            }
-          ]
+              text: `Sorry, I couldn't find a city named "${city}". Please check the spelling and try again.`,
+            },
+          ],
         };
       }
 
@@ -46,20 +46,49 @@ server.tool(
         content: [
           {
             type: "text",
-            text: JSON.stringify(weatherData, null, 2)
-          }
-        ]
+            text: JSON.stringify(weatherData, null, 2),
+          },
+        ],
       };
+
+    //   return {
+    //     content: [
+    //       {
+    //         type: "text",
+    //         text: `The weather in ${city} is sunny`,
+    //       },
+    //     ],
+    //   };
     } catch (error) {
       return {
         content: [
           {
             type: "text",
-            text: `Error fetching weather data: ${error.message}`
-          }
-        ]
+            text: `Error fetching weather data: ${error.message}`,
+          },
+        ],
       };
     }
+  }
+);
+
+// New simple greeting tool
+server.tool(
+  "greet",
+  "Simple tool that greets the user",
+  {
+    name: z.string().describe("Optional name to greet").optional(),
+  },
+  async ({ name }) => {
+    const text = name && name.trim() ? `Hello, ${name}!` : "Hello!";
+    return {
+      content: [
+        {
+          type: "text",
+          text,
+        },
+      ],
+    };
   }
 );
 
