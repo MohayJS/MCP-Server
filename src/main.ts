@@ -64,7 +64,7 @@ server.tool(
         content: [
           {
             type: "text",
-            text: `Error fetching weather data: ${error.message}`,
+            text: `Error fetching weather data: ${error}`,
           },
         ],
       };
